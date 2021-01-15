@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+
+  ########## GENERAL ##########
+
+  caddy-gateway:
+    image: caddy
+    container_name: "ap-caddy-gateway"
+    networks:
+      - ap-network
+      - ap-internal
+    env_file:
+      - ./.env
+    volumes:
+      - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./infrastructure/caddy/data:/data
+      - ./infrastructure/caddy/config:/config
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+      - 443:443/udp
+      - 8080:8080
+    restart: unless-stopped
+
+  varnish:
+    image: varnish
+    container_name: "ap-varnish"
+    networks:
+      - ap-internal
+    env_file:
+      - ./.env
+    volumes:
+      - ./infrastructure/varnish/default.vcl:/etc/varnish/default.vcl
+    ports:
+      - 6180:80
+    depends_on:
+      - caddy-gateway
+      - keycloak
+
+  email:
+    image: mailhog/mailhog
+    container_name: email-service
+    networks:
+      - ap-internal
+    env_file:
+      - ./.env
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+  ########## AUTHENTIFICATION - KEYCLOAK ##########
+  
+  keycloak:
+    image: jboss/keycloak
+    container_name: "ap-keycloak"
+    networks:
+      - ap-internal
+      - ap-auth
+    env_file:
+      - ./.env
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-postgres
+      DB_DATABASE: ${KEYCLOAK_DB_NAME}
+      DB_PORT: 5432
+      DB_USER: ${KEYCLOAK_DB_USER}
+      DB_SCHEMA: public
+      DB_PASSWORD: ${KEYCLOAK_DB_PWD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PWD}
+      PROXY_ADDRESS_FORWARDING: "true"
+    ports:
+      - 8180:8080
+    depends_on:
+      - keycloak-postgres
+
+  keycloak-postgres:
+    image: postgres
+    container_name: "ap-keycloak-postgres"
+    networks:
+      - ap-auth
+    volumes:
+      - ./infrastructure/keycloak/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DB_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PWD}
+
+networks:
+  ap-network:
+    external: true
+  ap-internal:
+    external: false
+    driver: bridge
+  ap-auth:
+    external: false
+    driver: bridge
