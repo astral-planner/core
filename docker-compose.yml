@@ -118,6 +118,7 @@ services:
       - 8181:80
     environment:
       PHP_INI_MEMORY_LIMIT: "1G"
+      PHP_EXTENSION_PDOPGSQL: "1"
       APP_ENV: "${APP_ENV}"
       DATABASE_URL: "postgres://${GAME_DB_USER}:${GAME_DB_PWD}@game-db:5432/game?sslmode=disable&charset=utf8"
 
