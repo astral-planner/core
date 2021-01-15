@@ -1,0 +1,37 @@
+{
+    email {$EMAIL_LETSENCRYPT}
+
+    # HTTP/3 support
+    servers {
+        protocol {
+            experimental_http3
+        }
+    }
+
+    auto_https disable_redirects
+}
+
+{$PROJECT_HOST} {
+    reverse_proxy ap-varnish:80 {
+        header_up Host {$PROJECT_HOST}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+
+        transport http {
+            read_buffer 4096
+        }
+    }
+}
+
+:8080 {
+    handle / {
+        respond "index via varnish"
+    }
+}
+
+localhost:8025 {
+    handle {
+        respond "Access denied" 403
+    }
+}
