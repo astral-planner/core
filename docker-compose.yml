@@ -51,7 +51,7 @@ services:
 
   graphql-gateway:
     image: graphql/gateway
-    container_name: "graphql-gateway"
+    container_name: "ap-graphql-gateway"
     networks:
       - ap-internal
     environment:
@@ -61,7 +61,7 @@ services:
     ports:
       - 6181:80
     depends_on:
-      - caddy-gateway
+      - ap-varnish
       - game
 
   ########## AUTHENTIFICATION - KEYCLOAK ##########
@@ -140,5 +140,8 @@ networks:
     external: false
     driver: bridge
   ap-auth:
+    external: false
+    driver: bridge
+  ap-game:
     external: false
     driver: bridge

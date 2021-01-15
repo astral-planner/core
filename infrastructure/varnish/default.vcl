@@ -16,8 +16,13 @@ backend default {
 }
 
 backend auth {
-    .host = "ap-keycloak";
-    .port = "8080";
+  .host = "ap-keycloak";
+  .port = "8080";
+}
+
+backend graphql {
+  .host = "ap-graphql-gateway";
+  .port = "80";
 }
 
 # Hosts allowed to send BAN requests
@@ -109,9 +114,11 @@ sub vcl_backend_response {
 }
 
 sub vcl_recv {
-    if (req.url ~ "^/auth") {
-        set req.backend_hint = auth;
-    } else {
-        set req.backend_hint = default;
-    }
+  if (req.url ~ "^/auth") {
+      set req.backend_hint = auth;
+  } else if (req.url ~ "^/graphql") {
+      set req.backend_hint = graphql;
+  } else {
+      set req.backend_hint = default;
+  }
 }
