@@ -49,6 +49,21 @@ services:
       - 8025:8025
       - 1025:1025
 
+  graphql-gateway:
+    image: graphql/gateway
+    container_name: "graphql-gateway"
+    networks:
+      - ap-internal
+    environment:
+      GRAPHQL_URL_0: "https://game:8181/graphql"
+      GRAPHQL_UPDATE_GATEWAY: true
+      GRAPHQL_UPDATE_GATEWAY_INTERVAL_MS: 60000
+    ports:
+      - 6181:80
+    depends_on:
+      - caddy-gateway
+      - game
+
   ########## AUTHENTIFICATION - KEYCLOAK ##########
   
   keycloak:
@@ -61,7 +76,7 @@ services:
       - ./.env
     environment:
       DB_VENDOR: POSTGRES
-      DB_ADDR: keycloak-postgres
+      DB_ADDR: keycloak-db
       DB_DATABASE: ${KEYCLOAK_DB_NAME}
       DB_PORT: 5432
       DB_USER: ${KEYCLOAK_DB_USER}
@@ -73,11 +88,11 @@ services:
     ports:
       - 8180:8080
     depends_on:
-      - keycloak-postgres
+      - keycloak-db
 
-  keycloak-postgres:
+  keycloak-db:
     image: postgres
-    container_name: "ap-keycloak-postgres"
+    container_name: "ap-keycloak-db"
     networks:
       - ap-auth
     volumes:
@@ -86,6 +101,37 @@ services:
       POSTGRES_DB: ${KEYCLOAK_DB_NAME}
       POSTGRES_USER: ${KEYCLOAK_DB_USER}
       POSTGRES_PASSWORD: ${KEYCLOAK_DB_PWD}
+  
+  ########## GAMESERVICE ##########
+
+  game:
+    image: thecodingmachine/php:8.0-v4-fpm
+    container_name: "ap-game-service"
+    networks:
+      - ap-internal
+      - ap-game
+    env_file:
+      - ./.env
+    volumes:
+      - ./GameService:/var/www/html
+    ports:
+      - 8181:80
+    environment:
+      PHP_INI_MEMORY_LIMIT: "1G"
+      APP_ENV: "${APP_ENV}"
+      DATABASE_URL: "postgres://${GAME_DB_USER}:${GAME_DB_PWD}@game-db:5432/game?sslmode=disable&charset=utf8"
+
+  game-db:
+    image: postgres
+    container_name: "ap-game-db"
+    networks:
+      - ap-game
+    volumes:
+      - ./infrastructure/servicesDb/game:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "game"
+      POSTGRES_USER: ${GAME_DB_USER}
+      POSTGRES_PASSWORD: ${GAME_DB_PWD}
 
 networks:
   ap-network:
