@@ -14,7 +14,7 @@
 route {
     root * /var/www/html
 
-    php_fastcgi unix//var/run/php/php-fpm.sock
+    php_fastcgi game:8190
     encode gzip zstd
     file_server
 }
