@@ -57,7 +57,7 @@ services:
       - ap-internal
     environment:
       GRAPHQL_URL_0: "https://game:8181/graphql"
-      GRAPHQL_UPDATE_GATEWAY: true
+      GRAPHQL_UPDATE_GATEWAY: "true"
       GRAPHQL_UPDATE_GATEWAY_INTERVAL_MS: 60000
     ports:
       - 6181:80
