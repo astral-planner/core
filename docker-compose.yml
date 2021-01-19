@@ -131,8 +131,8 @@ services:
     volumes:
       - ./GameService:/var/www/html
       - game_php_socket:/var/run/php
-      ports:
-        - 8182:9000
+    ports:
+      - 8182:9000
     environment:
       PHP_INI_MEMORY_LIMIT: "1G"
       PHP_EXTENSION_PGSQL: "1"
