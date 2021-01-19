@@ -37,6 +37,7 @@ services:
     depends_on:
       - caddy-gateway
       - keycloak
+      - graphql-gateway
 
   email:
     image: mailhog/mailhog
@@ -61,7 +62,6 @@ services:
     ports:
       - 6181:80
     depends_on:
-      - ap-varnish
       - game
 
   ########## AUTHENTIFICATION - KEYCLOAK ##########
@@ -104,9 +104,9 @@ services:
   
   ########## GAMESERVICE ##########
 
-  game:
-    image: thecodingmachine/php:8.0-v4-fpm
-    container_name: "ap-game-service"
+  game-caddy:
+    image: caddy
+    container_name: "game-caddy"
     networks:
       - ap-internal
       - ap-game
@@ -114,13 +114,35 @@ services:
       - ./.env
     volumes:
       - ./GameService:/var/www/html
+      - game_php_socket:/var/run/php
+      - ./GameService/Caddyfile:/etc/caddy/Caddyfile
+      - ./GameService/caddy/data:/data
+      - ./GameService/caddy/config:/config
     ports:
       - 8181:80
+
+  game:
+    image: thecodingmachine/php:8.0-v4-fpm
+    container_name: "ap-game-service"
+    networks:
+      - ap-game
+    env_file:
+      - ./.env
+    volumes:
+      - ./GameService:/var/www/html
+      - game_php_socket:/var/run/php
+      ports:
+        - 8182:9000
     environment:
       PHP_INI_MEMORY_LIMIT: "1G"
-      PHP_EXTENSION_PDOPGSQL: "1"
+      PHP_EXTENSION_PGSQL: "1"
+      PHP_EXTENSION_MYSQLI: "0"
       APP_ENV: "${APP_ENV}"
       DATABASE_URL: "postgres://${GAME_DB_USER}:${GAME_DB_PWD}@game-db:5432/game?sslmode=disable&charset=utf8"
+      PHP_EXTENSION_XDEBUG: "1"
+      PHP_INI_XDEBUG__REMOTE_AUTOSTART: "1"
+    depends_on:
+      - game-db
 
   game-db:
     image: postgres
@@ -133,6 +155,9 @@ services:
       POSTGRES_DB: "game"
       POSTGRES_USER: ${GAME_DB_USER}
       POSTGRES_PASSWORD: ${GAME_DB_PWD}
+
+volumes:
+  game_php_socket:
 
 networks:
   ap-network:

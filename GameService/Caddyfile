@@ -1,0 +1,20 @@
+{
+    email {$EMAIL_LETSENCRYPT}
+
+    # HTTP/3 support
+    servers {
+        protocol {
+            experimental_http3
+        }
+    }
+
+    auto_https disable_redirects
+}
+
+route {
+    root * /var/www/html
+
+    php_fastcgi unix//var/run/php/php-fpm.sock
+    encode gzip zstd
+    file_server
+}
