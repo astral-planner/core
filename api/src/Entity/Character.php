@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CharacterRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -58,6 +60,21 @@ class Character
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Guild::class, inversedBy="characters")
+     */
+    private $guild;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=CharacterClassCharacter::class, mappedBy="character")
+     */
+    private $characterClassCharacter;
+
+    public function __construct()
+    {
+        $this->characterClassCharacter = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -156,6 +173,45 @@ class Character
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getGuild(): ?Guild
+    {
+        return $this->guild;
+    }
+
+    public function setGuild(?Guild $guild): self
+    {
+        $this->guild = $guild;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CharacterClassCharacter[]
+     */
+    public function getCharacterClassCharacter(): Collection
+    {
+        return $this->characterClassCharacter;
+    }
+
+    public function addCharacterClassCharacter(CharacterClassCharacter $characterClassCharacter): self
+    {
+        if (!$this->characterClassCharacter->contains($characterClassCharacter)) {
+            $this->characterClassCharacter[] = $characterClassCharacter;
+            $characterClassCharacter->addCharacter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCharacterClassCharacter(CharacterClassCharacter $characterClassCharacter): self
+    {
+        if ($this->characterClassCharacter->removeElement($characterClassCharacter)) {
+            $characterClassCharacter->removeCharacter($this);
+        }
 
         return $this;
     }

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CharacterClassRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,6 +40,16 @@ class CharacterClass
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=CharacterClassCharacter::class, mappedBy="chracterClass")
+     */
+    private $characterClassCharacters;
+
+    public function __construct()
+    {
+        $this->characterClassCharacters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -88,6 +100,33 @@ class CharacterClass
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CharacterClassCharacter[]
+     */
+    public function getCharacterClassCharacters(): Collection
+    {
+        return $this->characterClassCharacters;
+    }
+
+    public function addCharacterClassCharacter(CharacterClassCharacter $characterClassCharacter): self
+    {
+        if (!$this->characterClassCharacters->contains($characterClassCharacter)) {
+            $this->characterClassCharacters[] = $characterClassCharacter;
+            $characterClassCharacter->addChracterClass($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCharacterClassCharacter(CharacterClassCharacter $characterClassCharacter): self
+    {
+        if ($this->characterClassCharacters->removeElement($characterClassCharacter)) {
+            $characterClassCharacter->removeChracterClass($this);
+        }
 
         return $this;
     }

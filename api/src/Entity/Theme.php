@@ -3,28 +3,28 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\GameRepository;
+use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=GameRepository::class)
+ * @ApiResource()
+ * @ORM\Entity(repositoryClass=ThemeRepository::class)
  */
-#[ApiResource(mercure: true)]
-class Game
+class Theme
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private ?int $id;
+    private $id;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=64)
      */
-    private string $name;
+    private $name;
 
     /**
      * @ORM\Column(type="datetime")
@@ -37,13 +37,13 @@ class Game
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Guild::class, mappedBy="game", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Day::class, mappedBy="theme")
      */
-    private $guilds;
+    private $day;
 
     public function __construct()
     {
-        $this->guilds = new ArrayCollection();
+        $this->day = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,29 +88,29 @@ class Game
     }
 
     /**
-     * @return Collection|Guild[]
+     * @return Collection|Day[]
      */
-    public function getGuilds(): Collection
+    public function getDay(): Collection
     {
-        return $this->guilds;
+        return $this->day;
     }
 
-    public function addGuild(Guild $guild): self
+    public function addDay(Day $day): self
     {
-        if (!$this->guilds->contains($guild)) {
-            $this->guilds[] = $guild;
-            $guild->setGame($this);
+        if (!$this->day->contains($day)) {
+            $this->day[] = $day;
+            $day->setTheme($this);
         }
 
         return $this;
     }
 
-    public function removeGuild(Guild $guild): self
+    public function removeDay(Day $day): self
     {
-        if ($this->guilds->removeElement($guild)) {
+        if ($this->day->removeElement($day)) {
             // set the owning side to null (unless already changed)
-            if ($guild->getGame() === $this) {
-                $guild->setGame(null);
+            if ($day->getTheme() === $this) {
+                $day->setTheme(null);
             }
         }
 
