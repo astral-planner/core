@@ -42,7 +42,7 @@ class CharacterClass
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=CharacterClassCharacter::class, mappedBy="chracterClass")
+     * @ORM\ManyToMany(targetEntity=CharacterClassCharacter::class, mappedBy="characterClass")
      */
     private $characterClassCharacters;
 
@@ -116,7 +116,7 @@ class CharacterClass
     {
         if (!$this->characterClassCharacters->contains($characterClassCharacter)) {
             $this->characterClassCharacters[] = $characterClassCharacter;
-            $characterClassCharacter->addChracterClass($this);
+            $characterClassCharacter->addCharacterClass($this);
         }
 
         return $this;
@@ -125,7 +125,7 @@ class CharacterClass
     public function removeCharacterClassCharacter(CharacterClassCharacter $characterClassCharacter): self
     {
         if ($this->characterClassCharacters->removeElement($characterClassCharacter)) {
-            $characterClassCharacter->removeChracterClass($this);
+            $characterClassCharacter->removeCharacterClass($this);
         }
 
         return $this;

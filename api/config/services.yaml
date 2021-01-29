@@ -5,6 +5,15 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     - { resource: '../data/games.yaml' }
+    - registrationSecretCode: ''
+    - authorizeRegistration: true
+    - maintenanceMode: false
+    - globalMessageStatus: false
+    - globalMessage: ''
+    - calendarAccessMinRole: ''
+    - calendarEditMinRole: ''
+    - calendarAdminMinRole: ''
+    - AdminAccessMinRole: ''
 
 services:
     # default configuration for services in *this* file

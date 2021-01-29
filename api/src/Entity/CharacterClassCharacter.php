@@ -37,19 +37,19 @@ class CharacterClassCharacter
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Character::class, inversedBy="characterClass")
+     * @ORM\ManyToMany(targetEntity=Character::class, inversedBy="characterClassCharacter")
      */
     private $character;
 
     /**
      * @ORM\ManyToMany(targetEntity=CharacterClass::class, inversedBy="characterClassCharacters")
      */
-    private $chracterClass;
+    private $characterClass;
 
     public function __construct()
     {
         $this->character = new ArrayCollection();
-        $this->chracterClass = new ArrayCollection();
+        $this->characterClass = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,23 +120,23 @@ class CharacterClassCharacter
     /**
      * @return Collection|CharacterClass[]
      */
-    public function getChracterClass(): Collection
+    public function getCharacterClass(): Collection
     {
-        return $this->chracterClass;
+        return $this->characterClass;
     }
 
-    public function addChracterClass(CharacterClass $chracterClass): self
+    public function addCharacterClass(CharacterClass $characterClass): self
     {
-        if (!$this->chracterClass->contains($chracterClass)) {
-            $this->chracterClass[] = $chracterClass;
+        if (!$this->characterClass->contains($characterClass)) {
+            $this->characterClass[] = $characterClass;
         }
 
         return $this;
     }
 
-    public function removeChracterClass(CharacterClass $chracterClass): self
+    public function removeCharacterClass(CharacterClass $characterClass): self
     {
-        $this->chracterClass->removeElement($chracterClass);
+        $this->characterClass->removeElement($characterClass);
 
         return $this;
     }
