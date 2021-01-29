@@ -1,0 +1,7 @@
+ffxiv:
+  name: "Final Fantasy XIV"
+  code: "ffxiv"
+  api:
+    xivapi:
+      name: "XIVAPI"
+      url: "https://xivapi.com/"
