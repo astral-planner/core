@@ -3,7 +3,7 @@ vcl 4.0;
 import std;
 
 backend default {
-  .host = "ap-caddy-gateway";
+  .host = "caddy";
   .port = "8080";
   # Health check
   #.probe = {

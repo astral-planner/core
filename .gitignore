@@ -3,3 +3,9 @@
 !.env.dist
 
 !.keep
+
+
+/infrastructure/caddy/data
+/infrastructure/caddy/config
+/infrastructure/db
+/infrastructure/keycloak
