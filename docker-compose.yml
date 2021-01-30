@@ -9,8 +9,6 @@ services:
     networks:
       - ap-internal
       - ap-api-network
-    env_file:
-      - ./.env
     depends_on:
       - database
     restart: unless-stopped
@@ -44,8 +42,6 @@ services:
     networks:
       - ap-network
       - ap-internal
-    env_file:
-      - ./.env
     depends_on:
       - php
       - pwa
@@ -82,8 +78,6 @@ services:
     container_name: "database"
     networks:
       - ap-api-network
-    env_file:
-      - ./.env
     environment:
       POSTGRES_DB: "api"
       POSTGRES_USER: "${API_DB_USER}"
@@ -101,8 +95,6 @@ services:
     networks:
       - ap-internal
       - ap-auth
-    env_file:
-      - ./.env
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: keycloak-db
@@ -138,8 +130,6 @@ services:
     container_name: "ap-varnish"
     networks:
       - ap-internal
-    env_file:
-      - ./.env
     volumes:
       - ./infrastructure/varnish/default.vcl:/etc/varnish/default.vcl
     ports:
@@ -153,8 +143,6 @@ services:
     container_name: email-service
     networks:
       - ap-internal
-    env_file:
-      - ./.env
     ports:
       - 8025:8025
       - 1025:1025
