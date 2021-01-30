@@ -7,6 +7,21 @@ on:
 jobs:
     tests:
         name: Docker build
+        env:
+          PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          SERVER_NAME: ${{ secrets.SERVER_NAME }}
+          KEYCLOAK_USER: ${{ secrets.KEYCLOAK_USER }}
+          KEYCLOAK_PWD: ${{ secrets.KEYCLOAK_PWD }}
+          KEYCLOAK_DB_NAME: ${{ secrets.KEYCLOAK_DB_NAME }}
+          KEYCLOAK_DB_USER: ${{ secrets.KEYCLOAK_DB_USER }}
+          KEYCLOAK_DB_PWD: ${{ secrets.KEYCLOAK_DB_PWD }}
+          API_DB_USER: ${{ secrets.API_DB_USER }}
+          API_DB_PWD: ${{ secrets.API_DB_PWD }}
+          MERCURE_PUBLISHER_JWT_KEY: ${{ secrets.MERCURE_PUBLISHER_JWT_KEY }}
+          MERCURE_SUBSCRIBER_JWT_KEY: ${{ secrets.MERCURE_SUBSCRIBER_JWT_KEY }}
+          MERCURE_JWT_TOKEN: ${{ secrets.MERCURE_JWT_TOKEN }}
+          CORS_ALLOWED_ORIGIN: ${{ secrets.CORS_ALLOWED_ORIGIN }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
