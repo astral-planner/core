@@ -40,7 +40,6 @@ services:
       target: api_platform_caddy
     container_name: "caddy"
     networks:
-      - ap-network
       - ap-internal
     depends_on:
       - php
@@ -154,8 +153,6 @@ volumes:
   caddy_config:
 
 networks:
-  ap-network:
-    external: true
   ap-internal:
     external: false
     driver: bridge
