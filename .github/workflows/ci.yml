@@ -12,7 +12,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
             - name: Pull images
-              env:
+              with:
                 PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
                 PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
                 SERVER_NAME: ${{ secrets.SERVER_NAME }}
@@ -29,7 +29,7 @@ jobs:
                 CORS_ALLOWED_ORIGIN: ${{ secrets.CORS_ALLOWED_ORIGIN }}
               run: docker-compose pull
             - name: Start services
-              env:
+              with:
                 PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
                 PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
                 SERVER_NAME: ${{ secrets.SERVER_NAME }}
